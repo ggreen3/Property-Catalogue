@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>PropertyHub</title>
+  <link rel="icon" type="image/png" href="https://via.placeholder.com/32?text=PH" onerror="this.onerror=null; this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22%3E%3Ccircle cx=%2216%22 cy=%2216%22 r=%2216%22 fill=%22%233b82f6%22/%3E%3Ctext x=%225%22 y=%2222%22 font-family=%22Inter, sans-serif%22 font-size=%2220%22 font-weight=%22700%22 fill=%22%23fff%22%3EPH%3C/text%3E%3C/svg%3E';">
   <style>
     :root {
       --jet-black: #1a1a1a;
@@ -61,6 +62,11 @@
       color: var(--accent);
     }
 
+    .nav-links {
+      display: flex;
+      align-items: center;
+    }
+
     .nav-links a {
       color: var(--gray-300);
       text-decoration: none;
@@ -72,6 +78,56 @@
 
     .nav-links a:hover {
       color: var(--white);
+    }
+
+    .wishlist-link {
+      position: relative;
+    }
+
+    .wishlist-counter {
+      position: absolute;
+      top: -8px;
+      right: -12px;
+      background-color: #ff3040;
+      color: var(--white);
+      font-size: 0.75rem;
+      font-weight: 600;
+      border-radius: 50%;
+      width: 18px;
+      height: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .hamburger {
+      display: none;
+      font-size: 1.8rem;
+      background: none;
+      border: none;
+      color: var(--gray-300);
+      cursor: pointer;
+    }
+
+    .nav-links.mobile {
+      display: none;
+      flex-direction: column;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background-color: var(--gray-900);
+      padding: 1rem;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    }
+
+    .nav-links.mobile.active {
+      display: flex;
+    }
+
+    .nav-links.mobile a {
+      margin: 0.5rem 0;
+      font-size: 1.1rem;
     }
 
     .container {
@@ -125,6 +181,16 @@
       background-color: #2563eb;
     }
 
+    .wishlist-section {
+      margin-bottom: 2rem;
+    }
+
+    .wishlist-section h2 {
+      font-size: 1.8rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+    }
+
     .property-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
@@ -137,6 +203,8 @@
       overflow: hidden;
       box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
       transition: transform 0.3s, box-shadow 0.3s;
+      cursor: pointer;
+      position: relative;
     }
 
     .property-card:hover {
@@ -167,6 +235,34 @@
       display: none;
     }
 
+    .carousel-nav {
+      position: absolute;
+      top: 50%;
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      transform: translateY(-50%);
+    }
+
+    .carousel-nav button {
+      background: rgba(0, 0, 0, 0.5);
+      border: none;
+      color: var(--white);
+      font-size: 1.5rem;
+      padding: 0.5rem;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .carousel-nav button:hover {
+      background: rgba(0, 0, 0, 0.8);
+    }
+
+    .carousel-nav button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
     .property-card .content {
       padding: 1.5rem;
     }
@@ -189,6 +285,134 @@
       font-size: 1.1rem;
     }
 
+    .wishlist-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: rgba(0, 0, 0, 0.5);
+      border: none;
+      color: var(--white);
+      font-size: 1.2rem;
+      padding: 0.5rem;
+      border-radius: 50%;
+      cursor: pointer;
+      transition: color 0.3s;
+    }
+
+    .wishlist-btn.active {
+      color: #ff3040;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      z-index: 2000;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+
+    .modal-content {
+      background-color: var(--gray-900);
+      border-radius: 0.75rem;
+      max-width: 800px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+      padding: 2rem;
+      position: relative;
+    }
+
+    .modal-content .image-carousel {
+      height: 400px;
+      margin-bottom: 1rem;
+    }
+
+    .modal-content h3 {
+      font-size: 1.8rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+    }
+
+    .modal-content p {
+      color: var(--gray-300);
+      margin-bottom: 0.75rem;
+    }
+
+    .modal-content .price {
+      font-size: 1.4rem;
+      font-weight: 600;
+      color: var(--white);
+    }
+
+    .date-picker {
+      display: flex;
+      gap: 1rem;
+      margin: 1rem 0;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .date-picker input {
+      padding: 0.75rem;
+      background-color: var(--gray-800);
+      border: none;
+      border-radius: 0.5rem;
+      color: var(--white);
+      font-size: 1rem;
+      flex: 1;
+      outline: none;
+      min-width: 150px;
+    }
+
+    .date-picker input:focus {
+      box-shadow: 0 0 0 2px var(--accent);
+    }
+
+    .date-picker label {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--gray-300);
+      font-size: 1rem;
+    }
+
+    .modal-content .book-btn {
+      width: 100%;
+      padding: 0.75rem;
+      background-color: var(--accent);
+      color: var(--white);
+      font-weight: 600;
+      border: none;
+      border-radius: 0.5rem;
+      cursor: pointer;
+      transition: background-color 0.3s;
+      text-decoration: none;
+      display: block;
+      text-align: center;
+      margin-bottom: 0.5rem;
+    }
+
+    .modal-content .book-btn:hover {
+      background-color: #2563eb;
+    }
+
+    .close-btn {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      background: none;
+      border: none;
+      color: var(--gray-300);
+      font-size: 1.5rem;
+      cursor: pointer;
+    }
+
     .section {
       margin: 3rem 0;
     }
@@ -208,22 +432,34 @@
       box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
     }
 
-    .contact-grid,
     .about-content {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+      align-items: center;
+    }
+
+    .about-image {
+      width: 100%;
+      height: 300px;
+      object-fit: cover;
+      border-radius: 0.75rem;
+      margin: 1rem 0;
+    }
+
+    .contact-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 2rem;
     }
 
-    .contact-grid h3,
-    .about-content h3 {
+    .contact-grid h3 {
       font-size: 1.4rem;
       font-weight: 600;
       margin-bottom: 1rem;
     }
 
-    .contact-grid p,
-    .about-content p {
+    .contact-grid p {
       color: var(--gray-400);
       margin-bottom: 0.75rem;
     }
@@ -457,13 +693,17 @@
       }
 
       .nav-container {
-        flex-direction: column;
-        gap: 1rem;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
       }
 
-      .nav-links a {
-        margin-left: 1rem;
-        margin-right: 1rem;
+      .nav-links {
+        display: none;
+      }
+
+      .hamburger {
+        display: block;
       }
 
       .search-bar {
@@ -472,6 +712,49 @@
 
       .property-grid {
         grid-template-columns: 1fr;
+      }
+
+      .about-image {
+        height: 200px;
+      }
+
+      .modal-content {
+        padding: 1rem;
+      }
+
+      .modal-content .image-carousel {
+        height: 300px;
+      }
+
+      .date-picker {
+        flex-direction: column;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .nav-container h1 {
+        font-size: 1.5rem;
+      }
+
+      .hamburger {
+        font-size: 1.5rem;
+      }
+
+      .search-bar input,
+      .search-bar select {
+        min-width: 100%;
+      }
+
+      .property-card .content {
+        padding: 1rem;
+      }
+
+      .modal-content h3 {
+        font-size: 1.5rem;
+      }
+
+      .modal-content .price {
+        font-size: 1.2rem;
       }
     }
 
@@ -489,33 +772,48 @@
   <nav>
     <div class="nav-container">
       <h1 onclick="showPage('home')">PropertyHub</h1>
+      <button class="hamburger" onclick="toggleMenu()" aria-label="Toggle menu">☰</button>
       <div class="nav-links">
-        <a href="#" onclick="showPage('home')">Home</a>
-        <a href="#" onclick="showPage('about')">About Us</a>
-        <a href="#" onclick="showPage('contact')">Contact</a>
+        <a href="#" onclick="showPage('home')" aria-label="Home page">Home</a>
+        <a href="#" onclick="showPage('about')" aria-label="About us page">About Us</a>
+        <a href="#" onclick="showPage('contact')" aria-label="Contact page">Contact</a>
+        <a href="#" onclick="showPage('wishlist')" class="wishlist-link" aria-label="Wishlist page">
+          Wishlist
+          <span class="wishlist-counter" id="wishlist-counter">0</span>
+        </a>
       </div>
     </div>
   </nav>
 
   <div id="home-page" class="container">
     <div class="search-bar">
-      <input type="text" id="search-location" placeholder="Location (e.g., New York)">
-      <select id="search-bedrooms">
+      <input type="text" id="search-location" placeholder="Location (e.g., Westlands)" aria-label="Search by location">
+      <select id="search-bedrooms" aria-label="Select number of bedrooms">
         <option value="">Bedrooms</option>
         <option value="1">1</option>
         <option value="2">2</option>
         <option value="3">3+</option>
       </select>
-      <select id="search-bathrooms">
+      <select id="search-bathrooms" aria-label="Select number of bathrooms">
         <option value="">Bathrooms</option>
         <option value="1">1</option>
         <option value="2">2</option>
         <option value="3">3+</option>
       </select>
-      <input type="number" id="search-price" placeholder="Max Price per Night">
-      <button onclick="searchProperties()">Search</button>
+      <input type="number" id="search-price" placeholder="Max Price per Night (KSh)" aria-label="Maximum price per night">
+      <button onclick="searchProperties()" aria-label="Search properties">Search</button>
     </div>
-    <div class="property-grid" id="property-grid"></div>
+    <div class="section">
+      <h2>All Properties</h2>
+      <div class="property-grid" id="property-grid"></div>
+    </div>
+  </div>
+
+  <div id="wishlist-page" class="container" style="display: none;">
+    <div class="wishlist-section">
+      <h2>Your Wishlist</h2>
+      <div class="property-grid" id="wishlist-grid"></div>
+    </div>
   </div>
 
   <div id="about-page" class="container" style="display: none;">
@@ -524,13 +822,15 @@
       <div class="about-content">
         <div>
           <h3>Our Mission</h3>
-          <p>At PropertyHub, we connect travelers and homeowners with unforgettable stays. Inspired by the seamless experience of platforms like Airbnb, we aim to provide a curated selection of premium properties worldwide, tailored to your unique needs.</p>
-          <p>Founded in 2025, our team is dedicated to making travel effortless, secure, and memorable. Whether you're seeking a cozy urban loft or a sprawling beachfront villa, PropertyHub is your gateway to extraordinary accommodations.</p>
+          <p>At PropertyHub, we connect travelers and homeowners with exceptional stays in Nairobi. Inspired by platforms like Airbnb, we offer a curated selection of premium properties tailored to your needs.</p>
+          <p>Founded in 2025, our team is dedicated to making your stay in Nairobi seamless, secure, and memorable. From modern apartments in Westlands to cozy homes in Karen, PropertyHub is your trusted partner for extraordinary accommodations.</p>
         </div>
+        <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c" alt="Luxury Property" class="about-image">
+        <img src="https://images.unsplash.com/photo-1560448204-e02f11c3d0e2" alt="Modern Interior" class="about-image">
         <div>
           <h3>Why Choose Us?</h3>
-          <p>We prioritize quality, trust, and user experience. Our platform offers verified listings, intuitive search tools, and 24/7 customer support. Every property is carefully vetted to ensure comfort and authenticity.</p>
-          <p>Join thousands of satisfied guests and hosts who trust PropertyHub for their travel and hosting needs. Discover your next home away from home today.</p>
+          <p>We prioritize quality, trust, and user experience. Our platform offers verified listings, intuitive search tools, and 24/7 customer support. Every property is vetted to ensure comfort and authenticity.</p>
+          <p>Join thousands of satisfied guests and hosts who trust PropertyHub for their travel and hosting needs in Nairobi. Discover your next home away from home today.</p>
         </div>
       </div>
     </div>
@@ -543,15 +843,15 @@
         <div>
           <h3>Get in Touch</h3>
           <p>Questions about a property or need help? We're here for you!</p>
-          <p>Email: support@propertyhub.com</p>
-          <p>Phone: (123) 456-7890</p>
-          <p>Address: 123 Travel Lane, Suite 100, New York, NY 10001</p>
+          <p>Email: support@propertyhub.co.ke</p>
+          <p>Phone: +254 123 456 789</p>
+          <p>Address: 123 Riverside Drive, Westlands, Nairobi, Kenya</p>
         </div>
         <div>
-          <input type="text" placeholder="Your Name">
-          <input type="email" placeholder="Your Email">
-          <textarea placeholder="Your Message"></textarea>
-          <button onclick="alert('Message sent!')">Send Message</button>
+          <input type="text" id="contact-name" placeholder="Your Name" aria-label="Your name">
+          <input type="email" id="contact-email" placeholder="Your Email" aria-label="Your email">
+          <textarea id="contact-message" placeholder="Your Message" aria-label="Your message"></textarea>
+          <button onclick="sendContactEmail()" aria-label="Send contact message">Send Message</button>
         </div>
       </div>
     </div>
@@ -560,8 +860,8 @@
   <div id="dashboard-page" class="container" style="display: none;">
     <div id="admin-login" class="admin-login">
       <h2>Admin Login</h2>
-      <input type="password" id="admin-password" placeholder="Enter admin password">
-      <button onclick="login()">Login</button>
+      <input type="password" id="admin-password" placeholder="Enter admin password" aria-label="Admin password">
+      <button onclick="login()" aria-label="Login to admin dashboard">Login</button>
     </div>
     <div id="admin-dashboard" class="admin-dashboard" style="display: none;">
       <h2>Admin Dashboard</h2>
@@ -572,7 +872,7 @@
         </div>
         <div class="stat-card">
           <h4>Average Price</h4>
-          <p id="stat-avg-price">$0</p>
+          <p id="stat-avg-price">KSh 0</p>
         </div>
         <div class="stat-card">
           <h4>Locations</h4>
@@ -580,19 +880,24 @@
         </div>
       </div>
       <div class="admin-form" id="property-form">
-        <input type="text" id="form-title" placeholder="Title">
-        <input type="text" id="form-location" placeholder="Location">
-        <input type="number" id="form-price" placeholder="Price per Night">
-        <input type="number" id="form-bedrooms" placeholder="Bedrooms">
-        <input type="number" id="form-bathrooms" placeholder="Bathrooms">
-        <textarea id="form-description" placeholder="Description"></textarea>
-        <input type="text" class="image-input" id="form-image-1" placeholder="Image URL 1">
-        <input type="text" class="image-input" id="form-image-2" placeholder="Image URL 2">
-        <input type="text" class="image-input" id="form-image-3" placeholder="Image URL 3">
-        <input type="text" class="image-input" id="form-image-4" placeholder="Image URL 4 (Optional)">
-        <input type="text" class="image-input" id="form-image-5" placeholder="Image URL 5 (Optional)">
-        <button onclick="saveProperty()">Add Property</button>
-        <button class="cancel-btn" id="cancel-btn" onclick="cancelEdit()" style="display: none;">Cancel Edit</button>
+        <input type="text" id="form-title" placeholder="Title" aria-label="Property title">
+        <input type="text" id="form-location" placeholder="Location (e.g., Westlands)" aria-label="Property location">
+        <input type="number" id="form-price" placeholder="Price per Night (KSh)" aria-label="Price per night">
+        <input type="number" id="form-bedrooms" placeholder="Bedrooms" aria-label="Number of bedrooms">
+        <input type="number" id="form-bathrooms" placeholder="Bathrooms" aria-label="Number of bathrooms">
+        <textarea id="form-description" placeholder="Description" aria-label="Property description"></textarea>
+        <input type="file" accept="image/*" class="image-input" id="form-image-1" onchange="previewImage(1)" aria-label="Upload first image">
+        <img id="preview-image-1" style="display: none; max-width: 100%; height: auto; margin-bottom: 0.5rem;" alt="Preview first image">
+        <input type="file" accept="image/*" class="image-input" id="form-image-2" onchange="previewImage(2)" aria-label="Upload second image">
+        <img id="preview-image-2" style="display: none; max-width: 100%; height: auto; margin-bottom: 0.5rem;" alt="Preview second image">
+        <input type="file" accept="image/*" class="image-input" id="form-image-3" onchange="previewImage(3)" aria-label="Upload third image">
+        <img id="preview-image-3" style="display: none; max-width: 100%; height: auto; margin-bottom: 0.5rem;" alt="Preview third image">
+        <input type="file" accept="image/*" class="image-input" id="form-image-4" onchange="previewImage(4)" aria-label="Upload fourth image">
+        <img id="preview-image-4" style="display: none; max-width: 100%; height: auto; margin-bottom: 0.5rem;" alt="Preview fourth image">
+        <input type="file" accept="image/*" class="image-input" id="form-image-5" onchange="previewImage(5)" aria-label="Upload fifth image">
+        <img id="preview-image-5" style="display: none; max-width: 100%; height: auto; margin-bottom: 0.5rem;" alt="Preview fifth image">
+        <button onclick="saveProperty()" aria-label="Add or update property">Add Property</button>
+        <button class="cancel-btn" id="cancel-btn" onclick="cancelEdit()" style="display: none;" aria-label="Cancel edit">Cancel Edit</button>
       </div>
       <div class="manage-listings">
         <h3>Manage Listings</h3>
@@ -601,37 +906,62 @@
     </div>
   </div>
 
+  <div id="property-modal" class="modal">
+    <div class="modal-content">
+      <button class="close-btn" onclick="closeModal()" aria-label="Close modal">✕</button>
+      <div id="modal-images" class="image-carousel">
+        <div class="carousel-nav">
+          <button onclick="scrollCarousel('modal-images', -1)" aria-label="Previous image">&lt;</button>
+          <button onclick="scrollCarousel('modal-images', 1)" aria-label="Next image">&gt;</button>
+        </div>
+      </div>
+      <h3 id="modal-title"></h3>
+      <p id="modal-location"></p>
+      <p id="modal-price" class="price"></p>
+      <p id="modal-rooms"></p>
+      <p id="modal-description"></p>
+      <div class="date-picker">
+        <input type="date" id="check-in" placeholder="Check-in Date" aria-label="Check-in date">
+        <input type="date" id="check-out" placeholder="Check-out Date" aria-label="Check-out date" disabled>
+        <label>
+          <input type="checkbox" id="indefinite-stay" onclick="toggleIndefinite()" aria-label="Indefinite stay"> Indefinite Stay
+        </label>
+      </div>
+      <a id="book-phone-btn" class="book-btn" href="tel:+254746779950" onclick="confirmBooking('phone')" aria-label="Book via phone">Book via Phone</a>
+      <a id="book-email-btn" class="book-btn" href="#" onclick="confirmBooking('email')" aria-label="Book via email">Book via Email</a>
+    </div>
+  </div>
+
   <footer>
     <p>© 2025 PropertyHub. All rights reserved.</p>
-    <p>Designed for extraordinary stays.</p>
+    <p>Designed for extraordinary stays in Nairobi.</p>
   </footer>
 
   <script>
-    // Initial properties with multiple images
+    // Initial properties (7 total, Nairobi-based)
     const initialProperties = [
       {
         id: 1,
-        title: "Luxury Loft in Downtown",
-        location: "New York, NY",
-        price: 250,
+        title: "Luxury Apartment in Westlands",
+        location: "Westlands, Nairobi",
+        price: 15000,
         bedrooms: 2,
         bathrooms: 2,
-        description: "Modern loft with stunning city views.",
+        description: "Modern apartment with stunning city views and high-end amenities in the heart of Westlands.",
         images: [
           "https://images.unsplash.com/photo-1613490493576-7fde63acd811",
           "https://images.unsplash.com/photo-1600585154340-be6161a56a0c",
-          "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2",
-          "https://images.unsplash.com/photo-1512917774080-9991f7c4c60d"
+          "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2"
         ]
       },
       {
         id: 2,
-        title: "Cozy Beachfront Villa",
-        location: "Miami, FL",
-        price: 400,
+        title: "Cozy Villa in Kilimani",
+        location: "Kilimani, Nairobi",
+        price: 25000,
         bedrooms: 3,
         bathrooms: 3,
-        description: "Spacious villa steps from the beach.",
+        description: "Spacious villa with a private garden, perfect for families in Kilimani.",
         images: [
           "https://images.unsplash.com/photo-1600585154340-be6161a56a0c",
           "https://images.unsplash.com/photo-1570129477492-45c003edd2be",
@@ -639,14 +969,88 @@
           "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2",
           "https://images.unsplash.com/photo-1613490493576-7fde63acd811"
         ]
+      },
+      {
+        id: 3,
+        title: "Executive Home in Lavington",
+        location: "Lavington, Nairobi",
+        price: 20000,
+        bedrooms: 4,
+        bathrooms: 3,
+        description: "Elegant home with ample parking and serene views in Lavington.",
+        images: [
+          "https://images.unsplash.com/photo-1512917774080-9991f7c4c60d",
+          "https://images.unsplash.com/photo-1600585154340-be6161a56a0c",
+          "https://images.unsplash.com/photo-1570129477492-45c003edd2be"
+        ]
+      },
+      {
+        id: 4,
+        title: "Modern Studio in Kileleshwa",
+        location: "Kileleshwa, Nairobi",
+        price: 8000,
+        bedrooms: 1,
+        bathrooms: 1,
+        description: "Sleek studio ideal for solo travelers or professionals in Kileleshwa.",
+        images: [
+          "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2",
+          "https://images.unsplash.com/photo-1613490493576-7fde63acd811",
+          "https://images.unsplash.com/photo-1600585154340-be6161a56a0c"
+        ]
+      },
+      {
+        id: 5,
+        title: "Charming Cottage in Karen",
+        location: "Karen, Nairobi",
+        price: 12000,
+        bedrooms: 2,
+        bathrooms: 2,
+        description: "Cozy cottage with a private patio and lush greenery in Karen.",
+        images: [
+          "https://images.unsplash.com/photo-1518780664697-55e3ad937233",
+          "https://images.unsplash.com/photo-1600585154340-be6161a56a0c",
+          "https://images.unsplash.com/photo-1570129477492-45c003edd2be"
+        ]
+      },
+      {
+        id: 6,
+        title: "Penthouse in Upper Hill",
+        location: "Upper Hill, Nairobi",
+        price: 30000,
+        bedrooms: 3,
+        bathrooms: 4,
+        description: "Luxurious penthouse with panoramic city views in Upper Hill.",
+        images: [
+          "https://images.unsplash.com/photo-1570129477492-45c003edd2be",
+          "https://images.unsplash.com/photo-1600585154340-be6161a56a0c",
+          "https://images.unsplash.com/photo-1512917774080-9991f7c4c60d",
+          "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2"
+        ]
+      },
+      {
+        id: 7,
+        title: "Family House in Runda",
+        location: "Runda, Nairobi",
+        price: 18000,
+        bedrooms: 3,
+        bathrooms: 2,
+        description: "Spacious family home with modern upgrades in the serene Runda estate.",
+        images: [
+          "https://images.unsplash.com/photo-1600585154340-be6161a56a0c",
+          "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2",
+          "https://images.unsplash.com/photo-1512917774080-9991f7c4c60d"
+        ]
       }
     ];
 
-    // Load properties from localStorage or use initial data
+    // Load properties and wishlist from localStorage or use initial data
     let properties = JSON.parse(localStorage.getItem('properties')) || initialProperties;
+    let wishlist = JSON.parse(localStorage.getItem('wishlist')) || [];
     let isAuthenticated = false;
     let editingId = null;
     let filteredProperties = [...properties];
+    let imagePreviews = {};
+    const today = new Date().toISOString().split('T')[0];
 
     // Save properties to localStorage
     function saveProperties() {
@@ -656,48 +1060,230 @@
       updateStats();
     }
 
-    // Render properties on home and admin pages
+    // Save wishlist to localStorage
+    function saveWishlist() {
+      localStorage.setItem('wishlist', JSON.stringify(wishlist));
+      renderProperties();
+    }
+
+    // Preview uploaded image
+    function previewImage(index) {
+      const fileInput = document.getElementById(`form-image-${index}`);
+      const preview = document.getElementById(`preview-image-${index}`);
+      const file = fileInput.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          preview.src = e.target.result;
+          preview.style.display = 'block';
+          imagePreviews[index] = e.target.result;
+        };
+        reader.readAsDataURL(file);
+      } else {
+        preview.style.display = 'none';
+        delete imagePreviews[index];
+      }
+    }
+
+    // Toggle hamburger menu
+    function toggleMenu() {
+      const navLinks = document.querySelector('.nav-links');
+      navLinks.classList.toggle('mobile');
+      navLinks.classList.toggle('active');
+    }
+
+    // Scroll carousel
+    function scrollCarousel(carouselId, direction) {
+      const carousel = document.getElementById(carouselId);
+      const scrollAmount = carousel.offsetWidth;
+      carousel.scrollBy({ left: direction * scrollAmount, behavior: 'smooth' });
+    }
+
+    // Update wishlist counter
+    function updateWishlistCounter() {
+      document.getElementById('wishlist-counter').textContent = wishlist.length;
+    }
+
+    // Toggle wishlist
+    function toggleWishlist(id) {
+      if (wishlist.includes(id)) {
+        wishlist = wishlist.filter(wid => wid !== id);
+      } else {
+        wishlist.push(id);
+      }
+      saveWishlist();
+    }
+
+    // Toggle indefinite stay
+    function toggleIndefinite() {
+      const indefinite = document.getElementById('indefinite-stay').checked;
+      const checkOut = document.getElementById('check-out');
+      checkOut.disabled = indefinite;
+      checkOut.value = indefinite ? '' : checkOut.value;
+      updateBookingEmail();
+    }
+
+    // Validate dates
+    function validateDates(checkIn, checkOut, indefinite) {
+      if (!checkIn) return "Please select a check-in date.";
+      if (new Date(checkIn) < new Date(today)) return "Check-in date cannot be in the past.";
+      if (!indefinite && checkOut && new Date(checkOut) <= new Date(checkIn)) {
+        return "Check-out date must be after check-in date.";
+      }
+      return null;
+    }
+
+    // Update booking email
+    function updateBookingEmail() {
+      const modalTitle = document.getElementById('modal-title').textContent;
+      const property = properties.find(p => p.title === modalTitle);
+      if (property) {
+        const checkIn = document.getElementById('check-in').value;
+        const checkOut = document.getElementById('indefinite-stay').checked ? 'Indefinite' : document.getElementById('check-out').value;
+        const subject = encodeURIComponent(`Booking Request: ${property.title}`);
+        const body = encodeURIComponent(
+          `Property: ${property.title}\n` +
+          `Location: ${property.location}\n` +
+          `Price: KSh ${property.price.toLocaleString()}/night\n` +
+          `Bedrooms: ${property.bedrooms}\n` +
+          `Bathrooms: ${property.bathrooms}\n` +
+          `Description: ${property.description}\n` +
+          `Check-in: ${checkIn || 'Not specified'}\n` +
+          `Check-out: ${checkOut || 'Not specified'}\n\n` +
+          `Please confirm availability and provide further details.`
+        );
+        document.getElementById('book-email-btn').href = `mailto:bookings@propertyhub.co.ke?subject=${subject}&body=${body}`;
+      }
+    }
+
+    // Confirm booking action
+    function confirmBooking(method) {
+      const checkIn = document.getElementById('check-in').value;
+      const checkOut = document.getElementById('check-out').value;
+      const indefinite = document.getElementById('indefinite-stay').checked;
+      const validationError = validateDates(checkIn, checkOut, indefinite);
+      if (validationError) {
+        alert(validationError);
+        return false;
+      }
+      alert(`Opening your ${method === 'phone' ? 'phone app' : 'email client'} to book this property.`);
+      return true;
+    }
+
+    // Open property modal
+    function openModal(id) {
+      const property = properties.find(p => p.id === id);
+      if (!property) return;
+
+      document.getElementById('modal-title').textContent = property.title;
+      document.getElementById('modal-location').textContent = property.location;
+      document.getElementById('modal-price').textContent = `KSh ${property.price.toLocaleString()}/night`;
+      document.getElementById('modal-rooms').textContent = `${property.bedrooms} bed • ${property.bathrooms} bath`;
+      document.getElementById('modal-description').textContent = property.description;
+      document.getElementById('modal-images').innerHTML = property.images
+        .filter(img => img)
+        .map(img => `<img src="${img}" alt="${property.title}">`)
+        .join('');
+
+      document.getElementById('check-in').value = '';
+      document.getElementById('check-out').value = '';
+      document.getElementById('indefinite-stay').checked = false;
+      document.getElementById('check-out').disabled = false;
+      updateBookingEmail();
+
+      document.getElementById('property-modal').style.display = 'flex';
+    }
+
+    // Close modal
+    function closeModal() {
+      document.getElementById('property-modal').style.display = 'none';
+      document.getElementById('check-in').value = '';
+      document.getElementById('check-out').value = '';
+      document.getElementById('indefinite-stay').checked = false;
+      document.getElementById('check-out').disabled = false;
+    }
+
+    // Send contact email
+    function sendContactEmail() {
+      const name = document.getElementById('contact-name').value;
+      const email = document.getElementById('contact-email').value;
+      const message = document.getElementById('contact-message').value;
+
+      if (!name || !email || !message) {
+        alert('Please fill all fields');
+        return;
+      }
+
+      const subject = encodeURIComponent('Contact Form Submission');
+      const body = encodeURIComponent(`Name: ${name}\nEmail: ${email}\nMessage: ${message}`);
+      window.location.href = `mailto:support@propertyhub.co.ke?subject=${subject}&body=${body}`;
+      alert('Opening your email client...');
+    }
+
+    // Render properties on home, wishlist, and admin pages
     function renderProperties() {
       const propertyGrid = document.getElementById('property-grid');
+      const wishlistGrid = document.getElementById('wishlist-grid');
       const adminPropertyGrid = document.getElementById('admin-property-grid');
       propertyGrid.innerHTML = '';
+      wishlistGrid.innerHTML = '';
       adminPropertyGrid.innerHTML = '';
 
-      filteredProperties.forEach(property => {
+      const isWishlistPage = document.getElementById('wishlist-page').style.display === 'block';
+      const propertiesToRender = isWishlistPage ? properties.filter(p => wishlist.includes(p.id)) : filteredProperties;
+
+      propertiesToRender.forEach(property => {
         const card = `
-          <div class="property-card fade-in">
-            <div class="image-carousel">
-              ${property.images.map(img => `<img src="${img}" alt="${property.title}">`).join('')}
+          <div class="property-card fade-in" onclick="openModal(${property.id})" role="button" tabindex="0" aria-label="View ${property.title}">
+            <div class="image-carousel" id="carousel-${property.id}">
+              ${property.images.filter(img => img).map(img => `<img src="${img}" alt="${property.title}">`).join('')}
+              <div class="carousel-nav">
+                <button onclick="scrollCarousel('carousel-${property.id}', -1)" aria-label="Previous image">&lt;</button>
+                <button onclick="scrollCarousel('carousel-${property.id}', 1)" aria-label="Next image">&gt;</button>
+              </div>
             </div>
+            <button class="wishlist-btn ${wishlist.includes(property.id) ? 'active' : ''}" onclick="event.stopPropagation(); toggleWishlist(${property.id})" aria-label="${wishlist.includes(property.id) ? 'Remove from' : 'Add to'} wishlist">♥</button>
             <div class="content">
               <h3>${property.title}</h3>
               <p>${property.location}</p>
-              <p class="price">$${property.price}/night</p>
+              <p class="price">KSh ${property.price.toLocaleString()}/night</p>
               <p>${property.bedrooms} bed • ${property.bathrooms} bath</p>
               <p>${property.description}</p>
             </div>
           </div>
         `;
-        propertyGrid.innerHTML += card;
+        if (isWishlistPage) {
+          wishlistGrid.innerHTML += card;
+        } else {
+          propertyGrid.innerHTML += card;
+        }
+      });
 
+      properties.forEach(property => {
         const adminCard = `
           <div class="property-card fade-in">
-            <div class="image-carousel">
-              ${property.images.map(img => `<img src="${img}" alt="${property.title}">`).join('')}
+            <div class="image-carousel" id="admin-carousel-${property.id}">
+              ${property.images.filter(img => img).map(img => `<img src="${img}" alt="${property.title}">`).join('')}
+              <div class="carousel-nav">
+                <button onclick="scrollCarousel('admin-carousel-${property.id}', -1)" aria-label="Previous image">&lt;</button>
+                <button onclick="scrollCarousel('admin-carousel-${property.id}', 1)" aria-label="Next image">&gt;</button>
+              </div>
             </div>
             <div class="content">
               <h3>${property.title}</h3>
               <p>${property.location}</p>
-              <p class="price">$${property.price}/night</p>
+              <p class="price">KSh ${property.price.toLocaleString()}/night</p>
               <div class="actions">
-                <button class="edit-btn" onclick="editProperty(${property.id})">Edit</button>
-                <button class="delete-btn" onclick="deleteProperty(${property.id})">Delete</button>
+                <button class="edit-btn" onclick="editProperty(${property.id})" aria-label="Edit property">Edit</button>
+                <button class="delete-btn" onclick="deleteProperty(${property.id})" aria-label="Delete property">Delete</button>
               </div>
             </div>
           </div>
         `;
         adminPropertyGrid.innerHTML += adminCard;
       });
+
+      updateWishlistCounter();
     }
 
     // Update dashboard stats
@@ -707,7 +1293,7 @@
       const locations = new Set(properties.map(p => p.location)).size;
 
       document.getElementById('stat-total').textContent = total;
-      document.getElementById('stat-avg-price').textContent = `$${avgPrice}`;
+      document.getElementById('stat-avg-price').textContent = `KSh ${avgPrice.toLocaleString()}`;
       document.getElementById('stat-locations').textContent = locations;
     }
 
@@ -735,6 +1321,7 @@
     // Show specific page
     function showPage(page) {
       document.getElementById('home-page').style.display = page === 'home' ? 'block' : 'none';
+      document.getElementById('wishlist-page').style.display = page === 'wishlist' ? 'block' : 'none';
       document.getElementById('about-page').style.display = page === 'about' ? 'block' : 'none';
       document.getElementById('contact-page').style.display = page === 'contact' ? 'block' : 'none';
       document.getElementById('dashboard-page').style.display = page === 'dashboard' ? 'block' : 'none';
@@ -744,7 +1331,7 @@
         document.getElementById('admin-dashboard').style.display = isAuthenticated ? 'block' : 'none';
         if (isAuthenticated) updateStats();
       }
-     renderProperties();
+      renderProperties();
     }
 
     // Admin login
@@ -770,16 +1357,16 @@
         bathrooms: parseInt(document.getElementById('form-bathrooms').value),
         description: document.getElementById('form-description').value,
         images: [
-          document.getElementById('form-image-1').value,
-          document.getElementById('form-image-2').value,
-          document.getElementById('form-image-3').value,
-          document.getElementById('form-image-4').value || '',
-          document.getElementById('form-image-5').value || ''
+          imagePreviews[1] || '',
+          imagePreviews[2] || '',
+          imagePreviews[3] || '',
+          imagePreviews[4] || '',
+          imagePreviews[5] || ''
         ].filter(img => img)
       };
 
       if (!property.title || !property.location || !property.price || !property.bedrooms || !property.bathrooms || !property.description || property.images.length < 3) {
-        alert('Please fill all required fields and provide at least 3 images');
+        alert('Please fill all required fields and upload at least 3 images');
         return;
       }
 
@@ -804,11 +1391,21 @@
       document.getElementById('form-bedrooms').value = property.bedrooms;
       document.getElementById('form-bathrooms').value = property.bathrooms;
       document.getElementById('form-description').value = property.description;
-      document.getElementById('form-image-1').value = property.images[0] || '';
-      document.getElementById('form-image-2').value = property.images[1] || '';
-      document.getElementById('form-image-3').value = property.images[2] || '';
-      document.getElementById('form-image-4').value = property.images[3] || '';
-      document.getElementById('form-image-5').value = property.images[4] || '';
+
+      for (let i = 1; i <= 5; i++) {
+        const preview = document.getElementById(`preview-image-${i}`);
+        const fileInput = document.getElementById(`form-image-${i}`);
+        if (property.images[i-1]) {
+          preview.src = property.images[i-1];
+          preview.style.display = 'block';
+          imagePreviews[i] = property.images[i-1];
+        } else {
+          preview.style.display = 'none';
+          delete imagePreviews[i];
+          fileInput.value = '';
+        }
+      }
+
       document.getElementById('cancel-btn').style.display = 'block';
       document.querySelector('#property-form button:not(.cancel-btn)').textContent = 'Update Property';
     }
@@ -825,7 +1422,9 @@
     function deleteProperty(id) {
       if (confirm('Are you sure you want to delete this property?')) {
         properties = properties.filter(p => p.id !== id);
+        wishlist = wishlist.filter(wid => wid !== id);
         saveProperties();
+        saveWishlist();
       }
     }
 
@@ -837,11 +1436,11 @@
       document.getElementById('form-bedrooms').value = '';
       document.getElementById('form-bathrooms').value = '';
       document.getElementById('form-description').value = '';
-      document.getElementById('form-image-1').value = '';
-      document.getElementById('form-image-2').value = '';
-      document.getElementById('form-image-3').value = '';
-      document.getElementById('form-image-4').value = '';
-      document.getElementById('form-image-5').value = '';
+      for (let i = 1; i <= 5; i++) {
+        document.getElementById(`form-image-${i}`).value = '';
+        document.getElementById(`preview-image-${i}`).style.display = 'none';
+        delete imagePreviews[i];
+      }
     }
 
     // Secret admin access
@@ -860,6 +1459,21 @@
     if (window.location.hash === '#admin') {
       accessAdmin();
     }
+
+    // Update booking email on date change
+    document.getElementById('check-in').addEventListener('change', updateBookingEmail);
+    document.getElementById('check-out').addEventListener('change', updateBookingEmail);
+
+    // Keyboard navigation for property cards
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        const activeElement = document.activeElement;
+        if (activeElement.classList.contains('property-card')) {
+          const id = activeElement.getAttribute('onclick').match(/\d+/)[0];
+          openModal(id);
+        }
+      }
+    });
 
     // Initial render
     renderProperties();
